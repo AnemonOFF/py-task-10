@@ -3,21 +3,53 @@ from PIL import Image
 
 
 def get_image_array(path: str) -> np.ndarray:
+    """
+    Return image as numpy array from path
+
+    :param path: Image path
+    :return: Image as numpy array
+    """
     img = Image.open(path)
     return np.array(img)
 
 
 def save_image(img: np.ndarray, name: str) -> None:
+    """
+    Saving image in file
+
+    :param img: Input image as numpy array
+    :param name: Name of image file
+    """
     res = Image.fromarray(img)
     res.save(name)
 
 
 def get_brightness(x: int, y: int, img: np.ndarray, block_height: int, block_width: int, gray_step: int):
+    """
+    Calculating brightness of mosaic block (average bright of image pixels)
+
+    :param x: Image X coordinate
+    :param y: Image Y coordinate
+    :param img: Input image as numpy array
+    :param block_height: Mosaic block height
+    :param block_width: Mosaic block width
+    :param gray_step: Gray step
+    :return: Brightness of mosaic block
+    """
     res = np.average(img[y: y + block_height, x: x + block_width])
     return res - res % gray_step
 
 
 def create_gray_mosaic(img: np.ndarray, block_height: int, block_width: int, gray_step: int) -> np.ndarray:
+    """
+    Converting input img to pixel mosaic
+
+    :param img: Input image as numpy array
+    :param block_height: Mosaic block height
+    :param block_width: Mosaic block width
+    :param gray_step: Gray step
+    :return: Mosaic image as numpy array
+    """
     print("In progress... Please, wait.")
     res_img = img.copy()
 
@@ -30,6 +62,23 @@ def create_gray_mosaic(img: np.ndarray, block_height: int, block_width: int, gra
 
 
 def get_step(gray_scale: int) -> int:
+    """
+        Converting gray gradation in gray step
+
+        :param gray_scale: Gradations count
+        :return: step
+
+        >>> get_step(0)
+        Traceback (most recent call last):
+            ...
+        ValueError: Number of gradations must be in [1, 255]. You input: 0
+        >>> get_step(256)
+        Traceback (most recent call last):
+            ...
+        ValueError: Number of gradations must be in [1, 255]. You input: 256
+        >>> get_step(6)
+        50
+        """
     if gray_scale < 1 or gray_scale > 255:
         raise ValueError(f"Number of gradations must be in [1, 255]. You input: {gray_scale}")
     gray_scale -= 1
